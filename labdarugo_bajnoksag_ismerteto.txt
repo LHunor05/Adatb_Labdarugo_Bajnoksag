@@ -3,24 +3,33 @@ Labdarúgó-bajnokság adatbázis (Bundesliga 2011–12)
 Téma: Labdarúgó bajnokság mérkőzéseinek nyilvántartása --> 2011-2012-es német elsőosztály adatai
 Adatforrás: https://www.football-data.co.uk/germanym.php
 
-Modell --> 5 tábla
+Logikai modell - részletesebben
+Táblák és kapcsolataik:
+	Csapatok
+		csapat_id: egyedi azonosító (PK)
+		nev: csapat neve, egyedi
 
-Csapatok
-	A bajnokságban részt vevő csapatok nevei.
-	Oszlopok: csapat_id, nev
+	Fordulok
+		fordulo_id: egyedi azonosító (PK)
+		fordulo_szam: sorszám
+		datum_kezdete, datum_vege: a forduló időintervalluma
 
-Fordulok
-	A 34 forduló időintervallumai.
-	Oszlopok: fordulo_id, fordulo_szam, datum_kezdete, datum_vege
+	Merkozesek
+		merkozes_id: egyedi azonosító (PK)
+		datum: a mérkőzés napja
+		hazai_csapat_id, vendeg_csapat_id: idegen kulcsok a Csapatok táblára (FK)
+		fordulo_id: idegen kulcs a Fordulok táblára (FK)
 
-Merkozesek
-	A mérkőzések alapadatai, időpont, részt vevő csapatok, forduló.
-	Oszlopok: merkozes_id, datum, hazai_csapat_id, vendeg_csapat_id, fordulo_id
+	Eredmenyek
+		eredmeny_id: egyedi azonosító (PK)
+		merkozes_id: idegen kulcs a Merkozesek táblára (FK, UNIQUE)
+		hazai_gol, vendeg_gol, felido_hazai, felido_vendeg
 
-Eredmenyek
-	A meccsek végső és félidei eredménye.
-	Oszlopok: eredmeny_id, merkozes_id, hazai_gol, vendeg_gol, felido_hazai, felido_vendeg
+	Statisztikak
+		stat_id: egyedi azonosító (PK)
+		merkozes_id: idegen kulcs a Merkozesek táblára (FK, UNIQUE)
+		Mezők: hazai_loves, vendeg_loves, hazai_loves_kapura, vendeg_loves_kapura, hazai_sarga, vendeg_sarga, hazai_piros, vendeg_piros
 
-Statisztikak
-	Részletes meccsstatisztikák: lövések, lapok stb.
-	Oszlopok: stat_id, merkozes_id, hazai_loves, vendeg_loves, hazai_loves_kapura, vendeg_loves_kapura, hazai_sarga, vendeg_sarga, hazai_piros, vendeg_piros
+Kapcsolatok:
+1:N --> Csapatok és Merkozesek között (hazai és vendég csapatként), Fordulok és Merkozesek között
+1:1 --> Merkozesek és Eredmenyek kozott, Merkozesek és Statisztikak között
